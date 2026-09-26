@@ -1,133 +1,38 @@
 
-<!DOCTYPE html>
-<html lang="sq">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+export default {
+async fetch(request) {
+const incoming = new URL(request.url);
 
-<title>TVIliria Live</title>
+const base = "https://ssh101.com/live/albanianusa/";
 
-<style>
-body {
-margin: 0;
-background: #000;
-color: #fff;
-font-family: Arial, sans-serif;
+let target = base;
+
+if (incoming.pathname !== "/") {
+target = base + incoming.pathname.replace(/^\/+/, "");
 }
 
-header {
-background: #111;
-padding: 18px;
-text-align: center;
-border-bottom: 2px solid #d4af37;
+try {
+const response = await fetch(target, {
+headers: {
+"User-Agent": "Mozilla/5.0",
+"Referer": "https://ssh101.com/"
 }
-
-header h1 {
-margin: 0;
-color: #d4af37;
-font-size: 32px;
-}
-
-.live {
-color: red;
-font-weight: bold;
-margin-top: 6px;
-}
-
-nav {
-text-align: center;
-padding: 12px;
-background: #181818;
-}
-
-nav a {
-color: #fff;
-text-decoration: none;
-margin: 0 12px;
-}
-
-.video-box {
-max-width: 1000px;
-margin: 25px auto;
-padding: 10px;
-background: #111;
-}
-
-video {
-width: 100%;
-display: block;
-background: #000;
-}
-
-.info {
-text-align: center;
-padding: 15px;
-}
-
-footer {
-text-align: center;
-padding: 25px;
-color: #888;
-font-size: 14px;
-}
-</style>
-</head>
-
-<body>
-
-<header>
-<h1>TVIliria</h1>
-<div class="live">🔴 LIVE 24/7</div>
-</header>
-
-<nav>
-<a href="#">Lajme</a>
-<a href="#">Video</a>
-<a href="#">Programi</a>
-<a href="#">Kontakt</a>
-</nav>
-
-<div class="video-box">
-<video id="video" controls autoplay playsinline></video>
-</div>
-
-<div class="info">
-<h2>TVIliria Live</h2>
-<p>Televizioni shqiptar nga Chicago</p>
-</div>
-
-<footer>
-© TVIliria — Albanian Television from Chicago
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-<script>
-const video = document.getElementById("video");
-const streamURL = "https://ssh101.com/live/albanianusa/";
-
-if (Hls.isSupported()) {
-const hls = new Hls();
-
-hls.loadSource(streamURL);
-hls.attachMedia(video);
-
-hls.on(Hls.Events.MANIFEST_PARSED, function () {
-video.play().catch(function () {});
 });
 
-hls.on(Hls.Events.ERROR, function (event, data) {
-console.log("HLS error:", data);
+const headers = new Headers(response.headers);
+headers.set("Access-Control-Allow-Origin", "*");
+headers.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
+headers.set("Access-Control-Allow-Headers", "*");
+
+return new Response(response.body, {
+status: response.status,
+headers
 });
 
-} else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-video.src = streamURL;
-
-video.addEventListener("loadedmetadata", function () {
-video.play().catch(function () {});
+} catch (e) {
+return new Response("Proxy error: " + e.message, {
+status: 502
 });
 }
-</script>
-
-</body>
-</html>
+}
+};

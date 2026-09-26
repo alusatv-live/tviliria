@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TVIliria Live</title>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<style>
+body {
+margin: 0;
+background: #080808;
+color: white;
+font-family: Arial, sans-serif;
+}
+
+header {
+background: #111;
+padding: 18px;
+text-align: center;
+border-bottom: 2px solid #c9a227;
+}
+
+.logo {
+font-size: 32px;
+font-weight: bold;
+}
+
+.logo span {
+color: #c9a227;
+}
+
+.live {
+color: #e00000;
+font-weight: bold;
+margin-top: 5px;
+}
+
+.container {
+max-width: 1100px;
+margin: 30px auto;
+padding: 0 15px;
+}
+
+h1 {
+text-align: center;
+}
+
+.video-box {
+background: #000;
+border-radius: 10px;
+overflow: hidden;
+}
+
+video {
+width: 100%;
+display: block;
+aspect-ratio: 16 / 9;
+}
+
+.menu {
+display: flex;
+justify-content: center;
+gap: 25px;
+padding: 20px;
+background: #111;
+margin-top: 25px;
+flex-wrap: wrap;
+}
+
+.menu a {
+color: white;
+text-decoration: none;
+}
+
+.menu a:hover {
+color: #c9a227;
+}
+
+footer {
+text-align: center;
+padding: 30px;
+color: #888;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">TV<span>Iliria</span></div>
+<div class="live">● LIVE 24/7</div>
+</header>
+
+<div class="container">
+
+<h1>TVIliria Live</h1>
+
+<div class="video-box">
+<video id="video" controls autoplay playsinline></video>
+</div>
+
+<div class="menu">
+<a href="#">📰 Lajme</a>
+<a href="#">🎥 Video</a>
+<a href="#">📅 Programi</a>
+<a href="#">📞 Kontakt</a>
+</div>
+
+</div>
+
+<footer>
+© TVIliria — Albanian Television from Chicago
+</footer>
+
+<script>
+const video = document.getElementById('video');
+const streamURL = 'https://usb.bozztv.com/live/albanianusa/';
+
+if (video.canPlayType('application/vnd.apple.mpegurl')) {
+video.src = streamURL;
+} else if (Hls.isSupported()) {
+const hls = new Hls();
+hls.loadSource(streamURL);
+hls.attachMedia(video);
+}
+</script>
+
+</body>
+</html>

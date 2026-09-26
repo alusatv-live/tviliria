@@ -115,17 +115,34 @@ color: #888;
 </footer>
 
 <script>
-const video = document.getElementById('video');
 const streamURL = 'https://usb.bozztv.com/live/albanianusa/';
+const video = document.getElementById('video');
 
-if (video.canPlayType('application/vnd.apple.mpegurl')) {
-video.src = streamURL;
-} else if (Hls.isSupported()) {
-const hls = new Hls();
-hls.loadSource(streamURL);
-hls.attachMedia(video);
-}
-</script>
+if (Hls.isSupported()) {
+    const hls = new Hls({
+        enableWorker: true,
+        lowLatencyMode: true
+    });
+
+    hls.loadSource(streamURL);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+        video.play().catch(function () {});
+    });
+
+    hls.on(Hls.Events.ERROR, function (event, data) {
+        console.log('HLS error:', data);
+    });
+
+} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = streamURL;
+
+    video.addEventListener('loadedmetadata', function () {
+        video.play().catch(function () {});
+    });
+}const video = document.getElementById('video');
+
 
 </body>
 </html>

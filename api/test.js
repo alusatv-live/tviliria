@@ -1,19 +1,9 @@
 
 export default async function handler(req, res) {
-const source = "https://ssh101.com/live/albanianusa/";
+const streamUrl = "https://ssh101.com/live/albanianusa/";
 
 try {
-const target = req.query.url
-? decodeURIComponent(req.query.url)
-: source;
-
-const url = new URL(target);
-
-if (url.hostname !== "ssh101.com") {
-return res.status(403).send("Forbidden");
-}
-
-const response = await fetch(url.toString());
+const response = await fetch(streamUrl);
 
 if (!response.ok) {
 return res.status(response.status).send("Stream error");
@@ -29,7 +19,7 @@ res.setHeader("Cache-Control", "no-cache");
 if (
 contentType.includes("mpegurl") ||
 contentType.includes("m3u8") ||
-url.pathname.endsWith(".m3u8")
+streamUrl.includes(".m3u8")
 ) {
 let playlist = await response.text();
 
@@ -40,23 +30,20 @@ const trimmed = line.trim();
 
 if (!trimmed) return line;
 
-// Rewrite segment and playlist URLs
 if (!trimmed.startsWith("#")) {
-const absolute = new URL(trimmed, url).toString();
-return "/api/test?url=" + encodeURIComponent(absolute);
+const absoluteUrl = new URL(trimmed, streamUrl).toString();
+
+return (
+"/api/test?url=" +
+encodeURIComponent(absoluteUrl)
+);
 }
 
-// Rewrite URI inside EXT-X-KEY / EXT-X-MAP
 return line.replace(/URI="([^"]+)"/g, (match, uri) => {
-const absolute = new URL(uri, url).toString();
-return 'URI="/api/test?url=' + encodeURIComponent(absolute) + '"';
-});
-})
-.join("\n");
+const absoluteUrl = new URL(uri, streamUrl).toString();
 
-res.setHeader(
-"Content-Type",
-"application/vnd.apple.mpegurl"
+return (
+'URI="/api/test?url=' +
+encodeURIComponent(absoluteUrl) +
+'"'
 );
-
-return res.status(200).send(playlist);

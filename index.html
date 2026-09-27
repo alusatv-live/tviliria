@@ -4,7 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TVIliria Live</title>
+
+<title>TVIliria</title>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
@@ -12,69 +13,70 @@
 body {
 margin: 0;
 background: #000;
-color: #fff;
+color: white;
 font-family: Arial, sans-serif;
 text-align: center;
 }
 
-header {
-padding: 15px;
-background: #111;
-}
-
 h1 {
-margin: 0;
-font-size: 28px;
+margin: 20px 0;
 }
 
-.live {
-color: red;
-font-weight: bold;
+.player {
+width: 100%;
+max-width: 1280px;
+margin: auto;
+background: #000;
 }
 
 video {
 width: 100%;
-max-width: 1200px;
-height: auto;
-display: block;
-margin: 20px auto;
+aspect-ratio: 16 / 9;
 background: #000;
-}
-
-footer {
-padding: 20px;
-color: #aaa;
+display: block;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>TVIliria <span class="live">● LIVE 24/7</span></h1>
-</header>
+<h1>TVIliria</h1>
 
-<video id="video" controls autoplay playsinline></video>
-
-<footer>
-TVIliria Chicago — Albanian Television
-</footer>
+<div class="player">
+<video
+id="video"
+controls
+autoplay
+playsinline>
+</video>
+</div>
 
 <script>
 const video = document.getElementById("video");
-
 const streamURL = "/api/test";
 
 if (Hls.isSupported()) {
-const hls = new Hls();
+
+const hls = new Hls({
+enableWorker: true,
+lowLatencyMode: true
+});
+
 hls.loadSource(streamURL);
 hls.attachMedia(video);
 
 hls.on(Hls.Events.MANIFEST_PARSED, function () {
 video.play().catch(() => {});
 });
-}
-else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+
+hls.on(Hls.Events.ERROR, function (event, data) {
+console.log("HLS ERROR:", data);
+});
+
+} else if (
+video.canPlayType("application/vnd.apple.mpegurl")
+) {
+
 video.src = streamURL;
 
 video.addEventListener("loadedmetadata", function () {

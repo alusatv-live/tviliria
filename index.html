@@ -1,38 +1,87 @@
 
-export default {
-async fetch(request) {
-const incoming = new URL(request.url);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TVIliria Live</title>
 
-const base = "https://ssh101.com/live/albanianusa/";
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-let target = base;
-
-if (incoming.pathname !== "/") {
-target = base + incoming.pathname.replace(/^\/+/, "");
+<style>
+body {
+margin: 0;
+background: #000;
+color: #fff;
+font-family: Arial, sans-serif;
+text-align: center;
 }
 
-try {
-const response = await fetch(target, {
-headers: {
-"User-Agent": "Mozilla/5.0",
-"Referer": "https://ssh101.com/"
+header {
+padding: 15px;
+background: #111;
 }
+
+h1 {
+margin: 0;
+font-size: 28px;
+}
+
+.live {
+color: red;
+font-weight: bold;
+}
+
+video {
+width: 100%;
+max-width: 1200px;
+height: auto;
+display: block;
+margin: 20px auto;
+background: #000;
+}
+
+footer {
+padding: 20px;
+color: #aaa;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>TVIliria <span class="live">● LIVE 24/7</span></h1>
+</header>
+
+<video id="video" controls autoplay playsinline></video>
+
+<footer>
+TVIliria Chicago — Albanian Television
+</footer>
+
+<script>
+const video = document.getElementById("video");
+
+const streamURL = "https://ssh101.com/live/albanianusa/";
+
+if (Hls.isSupported()) {
+const hls = new Hls();
+hls.loadSource(streamURL);
+hls.attachMedia(video);
+
+hls.on(Hls.Events.MANIFEST_PARSED, function () {
+video.play().catch(() => {});
 });
+}
+else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+video.src = streamURL;
 
-const headers = new Headers(response.headers);
-headers.set("Access-Control-Allow-Origin", "*");
-headers.set("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
-headers.set("Access-Control-Allow-Headers", "*");
-
-return new Response(response.body, {
-status: response.status,
-headers
-});
-
-} catch (e) {
-return new Response("Proxy error: " + e.message, {
-status: 502
+video.addEventListener("loadedmetadata", function () {
+video.play().catch(() => {});
 });
 }
-}
-};
+</script>
+
+</body>
+</html>

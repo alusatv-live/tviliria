@@ -2,7 +2,7 @@
 export const runtime = "nodejs";
 
 export default async function handler(req, res) {
-const originalStream = "https://ssh101.com/live/albanianusa/";
+const originalStream = "https://lbgo.bozztv.com/ssh101/ssh101/albanianusa/chunks.m3u8?lb_backend_hint=7";
 
 try {
 if (req.method === "OPTIONS") {

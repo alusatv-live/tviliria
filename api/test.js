@@ -1,10 +1,17 @@
 
 export const runtime = "nodejs";
 
-export default async function handler(req, res) {
-const originalStream =
+const ALLOWED_HOSTS = [
+"lbgo.bozztv.com",
+"bozztv.com",
+"www.bozztv.com",
+"160bozztv.com",
+];
+
+const DEFAULT_STREAM =
 "https://lbgo.bozztv.com/ssh101/ssh101/albanianusa/chunks.m3u8?lb_backend_hint=7";
 
+export default async function handler(req, res) {
 try {
 if (req.method === "OPTIONS") {
 res.setHeader("Access-Control-Allow-Origin", "*");
@@ -15,32 +22,36 @@ return res.status(204).end();
 
 const requestedUrl = req.query.url
 ? decodeURIComponent(req.query.url)
-: originalStream;
+: DEFAULT_STREAM;
 
 const target = new URL(requestedUrl);
 
-if (target.hostname !== "lbgo.bozztv.com") {
+if (!ALLOWED_HOSTS.includes(target.hostname)) {
 return res.status(403).send("Forbidden");
 }
 
-const response = await fetch(target.toString());
+const response = await fetch(target.toString(), {
+headers: {
+"User-Agent":
+"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/141 Safari/537.36",
+"Referer": "https://ssh101.com/",
+},
+redirect: "follow",
+});
 
 if (!response.ok) {
-return res.status(response.status).send("Stream error");
+return res
+.status(response.status)
+.send("Stream error: " + response.status);
 }
 
 const contentType =
 response.headers.get("content-type") || "";
 
-res.setHeader("Access-Control-Allow-Origin", "*");
-res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-res.setHeader("Access-Control-Allow-Headers", "*");
-res.setHeader("Cache-Control", "no-cache");
-
 const buffer = Buffer.from(await response.arrayBuffer());
 
 const preview = buffer
-.subarray(0, 500)
+.subarray(0, 1000)
 .toString("utf8")
 .trim();
 
@@ -49,31 +60,28 @@ contentType.includes("mpegurl") ||
 contentType.includes("m3u8") ||
 preview.startsWith("#EXTM3U");
 
+res.setHeader("Access-Control-Allow-Origin", "*");
+res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+res.setHeader("Access-Control-Allow-Headers", "*");
+res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+res.setHeader("Access-Control-Expose-Headers", "*");
+
 if (isPlaylist) {
 let playlist = buffer.toString("utf8");
 
 playlist = playlist
-.split("\n")
+.split(/\r?\n/)
 .map((line) => {
 const trimmed = line.trim();
 
 if (!trimmed) return line;
 
-if (!trimmed.startsWith("#")) {
-const absoluteUrl = new URL(
-trimmed,
-target.toString()
-).toString();
-
-return (
-"/api/test?url=" +
-encodeURIComponent(absoluteUrl)
-);
-}
-
+// Keep HLS comments/tags unchanged
+if (trimmed.startsWith("#")) {
 return line.replace(
 /URI="([^"]+)"/g,
 (match, uri) => {
+try {
 const absoluteUrl = new URL(
 uri,
 target.toString()
@@ -84,8 +92,27 @@ return (
 encodeURIComponent(absoluteUrl) +
 '"'
 );
+} catch {
+return match;
+}
 }
 );
+}
+
+// Rewrite segment or child-playlist URL
+try {
+const absoluteUrl = new URL(
+trimmed,
+target.toString()
+).toString();
+
+return (
+"/api/test?url=" +
+encodeURIComponent(absoluteUrl)
+);
+} catch {
+return line;
+}
 })
 .join("\n");
 
@@ -97,15 +124,10 @@ res.setHeader(
 return res.status(200).send(playlist);
 }
 
+// MPEG-TS / video segments
 res.setHeader(
 "Content-Type",
-contentType || "application/octet-stream"
+contentType || "video/mp2t"
 );
 
-return res.status(200).send(buffer);
-} catch (error) {
-return res.status(500).send(
-"Proxy error: " + error.message
-);
-}
-}
+res.setHeader("Content-Length", buffer.length.toString());

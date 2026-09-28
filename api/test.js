@@ -38,3 +38,74 @@ res.setHeader("Access-Control-Allow-Headers", "*");
 res.setHeader("Cache-Control", "no-cache");
 
 const buffer = Buffer.from(await response.arrayBuffer());
+
+const preview = buffer
+.subarray(0, 500)
+.toString("utf8")
+.trim();
+
+const isPlaylist =
+contentType.includes("mpegurl") ||
+contentType.includes("m3u8") ||
+preview.startsWith("#EXTM3U");
+
+if (isPlaylist) {
+let playlist = buffer.toString("utf8");
+
+playlist = playlist
+.split("\n")
+.map((line) => {
+const trimmed = line.trim();
+
+if (!trimmed) return line;
+
+if (!trimmed.startsWith("#")) {
+const absoluteUrl = new URL(
+trimmed,
+target.toString()
+).toString();
+
+return (
+"/api/test?url=" +
+encodeURIComponent(absoluteUrl)
+);
+}
+
+return line.replace(
+/URI="([^"]+)"/g,
+(match, uri) => {
+const absoluteUrl = new URL(
+uri,
+target.toString()
+).toString();
+
+return (
+'URI="/api/test?url=' +
+encodeURIComponent(absoluteUrl) +
+'"'
+);
+}
+);
+})
+.join("\n");
+
+res.setHeader(
+"Content-Type",
+"application/vnd.apple.mpegurl"
+);
+
+return res.status(200).send(playlist);
+}
+
+res.setHeader(
+"Content-Type",
+contentType || "application/octet-stream"
+);
+
+return res.status(200).send(buffer);
+} catch (error) {
+return res.status(500).send(
+"Proxy error: " + error.message
+);
+}
+}

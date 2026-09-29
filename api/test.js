@@ -1,17 +1,15 @@
 
-export const runtime = "nodejs";
+const DEFAULT_STREAM =
+"https://lbgo.bozztv.com/ssh101/ssh101/albanianusa/chunks.m3u8?lb_backend_hint=7";
 
 const ALLOWED_HOSTS = [
 "lbgo.bozztv.com",
 "bozztv.com",
 "www.bozztv.com",
-"160bozztv.com",
+"160bozztv.com"
 ];
 
-const DEFAULT_STREAM =
-"https://lbgo.bozztv.com/ssh101/ssh101/albanianusa/chunks.m3u8?lb_backend_hint=7";
-
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
 try {
 if (req.method === "OPTIONS") {
 res.setHeader("Access-Control-Allow-Origin", "*");
@@ -32,11 +30,10 @@ return res.status(403).send("Forbidden");
 
 const response = await fetch(target.toString(), {
 headers: {
-"User-Agent":
-"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/141 Safari/537.36",
-"Referer": "https://ssh101.com/",
+"User-Agent": "Mozilla/5.0",
+"Referer": "https://ssh101.com/"
 },
-redirect: "follow",
+redirect: "follow"
 });
 
 if (!response.ok) {
@@ -63,8 +60,7 @@ preview.startsWith("#EXTM3U");
 res.setHeader("Access-Control-Allow-Origin", "*");
 res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
 res.setHeader("Access-Control-Allow-Headers", "*");
-res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-res.setHeader("Access-Control-Expose-Headers", "*");
+res.setHeader("Cache-Control", "no-cache");
 
 if (isPlaylist) {
 let playlist = buffer.toString("utf8");
@@ -76,43 +72,29 @@ const trimmed = line.trim();
 
 if (!trimmed) return line;
 
-// Keep HLS comments/tags unchanged
 if (trimmed.startsWith("#")) {
 return line.replace(
 /URI="([^"]+)"/g,
 (match, uri) => {
-try {
-const absoluteUrl = new URL(
-uri,
-target.toString()
-).toString();
+const absoluteUrl =
+new URL(uri, target.toString()).toString();
 
 return (
 'URI="/api/test?url=' +
 encodeURIComponent(absoluteUrl) +
 '"'
 );
-} catch {
-return match;
-}
 }
 );
 }
 
-// Rewrite segment or child-playlist URL
-try {
-const absoluteUrl = new URL(
-trimmed,
-target.toString()
-).toString();
+const absoluteUrl =
+new URL(trimmed, target.toString()).toString();
 
 return (
 "/api/test?url=" +
 encodeURIComponent(absoluteUrl)
 );
-} catch {
-return line;
-}
 })
 .join("\n");
 
@@ -124,10 +106,16 @@ res.setHeader(
 return res.status(200).send(playlist);
 }
 
-// MPEG-TS / video segments
 res.setHeader(
 "Content-Type",
 contentType || "video/mp2t"
 );
 
-res.setHeader("Content-Length", buffer.length.toString());
+return res.status(200).send(buffer);
+
+} catch (error) {
+return res
+.status(500)
+.send("Proxy error: " + error.message);
+}
+};

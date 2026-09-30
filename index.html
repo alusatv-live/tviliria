@@ -5,44 +5,135 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>TVIliria</title>
+<title>TVIliria LIVE</title>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style>
+* {
+box-sizing: border-box;
+}
+
 body {
 margin: 0;
-background: #000;
-color: white;
+background: #050505;
+color: #fff;
 font-family: Arial, sans-serif;
-text-align: center;
 }
 
-h1 {
-margin: 20px 0;
+.header {
+height: 70px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 25px;
+background: linear-gradient(90deg, #111, #000);
+border-bottom: 2px solid #b08d35;
 }
 
-.player {
+.logo {
+font-size: 30px;
+font-weight: bold;
+letter-spacing: 1px;
+}
+
+.logo span {
+color: #d4af37;
+}
+
+.live {
+color: #fff;
+background: #d00000;
+padding: 8px 14px;
+border-radius: 5px;
+font-weight: bold;
+font-size: 14px;
+}
+
+.container {
 width: 100%;
 max-width: 1280px;
-margin: auto;
+margin: 25px auto;
+padding: 0 15px;
+}
+
+.player-box {
+position: relative;
+width: 100%;
 background: #000;
+border: 1px solid #333;
+box-shadow: 0 0 25px rgba(0,0,0,.7);
 }
 
 video {
 width: 100%;
 aspect-ratio: 16 / 9;
-background: #000;
 display: block;
+background: #000;
+}
+
+.status {
+text-align: center;
+margin-top: 15px;
+color: #aaa;
+font-size: 14px;
+}
+
+.footer {
+text-align: center;
+margin: 35px 0 20px;
+color: #777;
+font-size: 13px;
+}
+
+@media (max-width: 600px) {
+
+.header {
+height: 60px;
+padding: 0 15px;
+}
+
+.logo {
+font-size: 24px;
+}
+
+.live {
+font-size: 12px;
+padding: 7px 10px;
+}
+
+.container {
+margin-top: 15px;
+padding: 0;
+}
+
+.player-box {
+border-left: 0;
+border-right: 0;
+}
+
+.status {
+font-size: 13px;
+}
 }
 </style>
 </head>
 
 <body>
 
-<h1>TVIliria</h1>
+<header class="header">
+<div class="logo">
+TV<span>Iliria</span>
+</div>
 
-<div class="player">
+<div class="live">
+🔴 LIVE
+</div>
+</header>
+
+<main class="container">
+
+<div class="player-box">
 <video
 id="video"
 controls
@@ -51,9 +142,27 @@ playsinline>
 </video>
 </div>
 
+<div id="status" class="status">
+Po lidhemi me TVIliria...
+</div>
+
+</main>
+
+<footer class="footer">
+TVIliria • Albanian Television in America
+</footer>
+
 <script>
+
 const video = document.getElementById("video");
-const streamURL = "/api/test";
+const status = document.getElementById("status");
+
+const streamURL =
+"https://lbgo.bozztv.com/ssh101/ssh101/albanianusa/chunks.m3u8?lb_backend_hint=7";
+
+function showStatus(message) {
+status.textContent = message;
+}
 
 if (Hls.isSupported()) {
 
@@ -66,11 +175,17 @@ hls.loadSource(streamURL);
 hls.attachMedia(video);
 
 hls.on(Hls.Events.MANIFEST_PARSED, function () {
+showStatus("🔴 TVIliria LIVE");
 video.play().catch(() => {});
 });
 
 hls.on(Hls.Events.ERROR, function (event, data) {
+
 console.log("HLS ERROR:", data);
+
+if (data.fatal) {
+showStatus("Stream temporarily unavailable");
+}
 });
 
 } else if (
@@ -80,9 +195,15 @@ video.canPlayType("application/vnd.apple.mpegurl")
 video.src = streamURL;
 
 video.addEventListener("loadedmetadata", function () {
+showStatus("🔴 TVIliria LIVE");
 video.play().catch(() => {});
 });
+
+} else {
+
+showStatus("HLS is not supported by this browser.");
 }
+
 </script>
 
 </body>

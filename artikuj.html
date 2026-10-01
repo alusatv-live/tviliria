@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TVIliria</title>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<style>
+body {
+margin: 0;
+background: #000;
+color: white;
+font-family: Arial, sans-serif;
+text-align: center;
+}
+
+header {
+padding: 20px 10px;
+background: #111;
+border-bottom: 2px solid #c9a227;
+}
+
+h1 {
+margin: 0;
+font-size: 32px;
+}
+
+.live {
+display: inline-block;
+margin-top: 10px;
+padding: 6px 12px;
+background: #d00000;
+color: white;
+border-radius: 20px;
+font-weight: bold;
+font-size: 14px;
+}
+
+.player {
+width: 100%;
+max-width: 1000px;
+margin: 25px auto 10px;
+background: #000;
+}
+
+video {
+width: 100%;
+display: block;
+background: #000;
+}
+
+.status {
+margin: 12px;
+color: #ccc;
+font-size: 15px;
+}
+
+.articles-button {
+display: inline-block;
+margin: 20px auto;
+padding: 13px 24px;
+background: #c9a227;
+color: #000;
+text-decoration: none;
+border-radius: 7px;
+font-weight: bold;
+font-size: 16px;
+}
+
+.articles-button:hover {
+background: #e0bd42;
+}
+
+footer {
+margin-top: 25px;
+padding: 20px;
+color: #888;
+font-size: 13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>TVIliria</h1>
+<div class="live">🔴 LIVE</div>
+</header>
+
+<div class="player">
+<video id="video" controls autoplay playsinline></video>
+</div>
+
+<div class="status" id="status">
+Po lidhemi me TVIliria LIVE...
+</div>
+
+<a href="artikujt.html" class="articles-button">
+📰 ARTIKUJT TVILIRIA
+</a>
+
+<footer>
+TVIliria • Albanian Television in America
+</footer>
+
+<script>
+
+const video = document.getElementById("video");
+const status = document.getElementById("status");
+
+const streamURL =
+"https://lbgo.bozztv.com/ssh101/ssh101/albanianusa/chunks.m3u8?lb_backend_hint=7";
+
+if (Hls.isSupported()) {
+
+const hls = new Hls({
+enableWorker: true,
+lowLatencyMode: true
+});
+
+hls.loadSource(streamURL);
+hls.attachMedia(video);
+
+hls.on(Hls.Events.MANIFEST_PARSED, function () {
+status.innerHTML = "🔴 TVIliria LIVE";
+});
+
+hls.on(Hls.Events.ERROR, function (event, data) {
+console.log("HLS error:", data);
+});
+
+} else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+
+video.src = streamURL;
+
+video.addEventListener("loadedmetadata", function () {
+status.innerHTML = "🔴 TVIliria LIVE";
+});
+
+} else {
+
+status.innerHTML = "Shfletuesi nuk mbështet LIVE TV.";
+}
+
+</script>
+
+</body>
+</html>

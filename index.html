@@ -1,210 +1,102 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sq">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>TVIliria LIVE</title>
+<title>TVIliria</title>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style>
-* {
-box-sizing: border-box;
-}
-
 body {
 margin: 0;
-background: #050505;
-color: #fff;
+background: #000;
+color: white;
 font-family: Arial, sans-serif;
+text-align: center;
 }
 
-.header {
-height: 70px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 0 25px;
-background: linear-gradient(90deg, #111, #000);
-border-bottom: 2px solid #b08d35;
+header {
+padding: 20px 10px;
+background: #111;
+border-bottom: 2px solid #c9a227;
 }
 
-.logo {
-font-size: 30px;
-font-weight: bold;
-letter-spacing: 1px;
-}
-
-.logo span {
-color: #d4af37;
+h1 {
+margin: 0;
+font-size: 32px;
 }
 
 .live {
-color: #fff;
+display: inline-block;
+margin-top: 10px;
+padding: 6px 12px;
 background: #d00000;
-padding: 8px 14px;
-border-radius: 5px;
+color: white;
+border-radius: 20px;
 font-weight: bold;
 font-size: 14px;
 }
 
-.container {
+.player {
 width: 100%;
-max-width: 1280px;
-margin: 25px auto;
-padding: 0 15px;
-}
-
-.player-box {
-position: relative;
-width: 100%;
+max-width: 1000px;
+margin: 25px auto 10px;
 background: #000;
-border: 1px solid #333;
-box-shadow: 0 0 25px rgba(0,0,0,.7);
 }
 
 video {
 width: 100%;
-aspect-ratio: 16 / 9;
 display: block;
 background: #000;
 }
 
 .status {
-text-align: center;
-margin-top: 15px;
-color: #aaa;
-font-size: 14px;
+margin: 12px;
+color: #ccc;
+font-size: 15px;
 }
 
-.footer {
-text-align: center;
-margin: 35px 0 20px;
-color: #777;
+.articles-button {
+display: inline-block;
+margin: 20px auto;
+padding: 13px 24px;
+background: #c9a227;
+color: #000;
+text-decoration: none;
+border-radius: 7px;
+font-weight: bold;
+font-size: 16px;
+}
+
+.articles-button:hover {
+background: #e0bd42;
+}
+
+footer {
+margin-top: 25px;
+padding: 20px;
+color: #888;
 font-size: 13px;
-}
-
-@media (max-width: 600px) {
-
-.header {
-height: 60px;
-padding: 0 15px;
-}
-
-.logo {
-font-size: 24px;
-}
-
-.live {
-font-size: 12px;
-padding: 7px 10px;
-}
-
-.container {
-margin-top: 15px;
-padding: 0;
-}
-
-.player-box {
-border-left: 0;
-border-right: 0;
-}
-
-.status {
-font-size: 13px;
-}
 }
 </style>
 </head>
 
 <body>
 
-<header class="header">
-<div class="logo">
-TV<span>Iliria</span>
-</div>
-
-<div class="live">
-🔴 LIVE
-</div>
+<header>
+<h1>TVIliria</h1>
+<div class="live">🔴 LIVE</div>
 </header>
 
-<main class="container">
-
-<div class="player-box">
-<video
-id="video"
-controls
-autoplay
-playsinline>
-</video>
+<div class="player">
+<video id="video" controls autoplay playsinline></video>
 </div>
 
-<div id="status" class="status">
-Po lidhemi me TVIliria...
+<div class="status" id="status">
+Po lidhemi me TVIliria LIVE...
 </div>
 
-</main>
-
-<footer class="footer">
-TVIliria • Albanian Television in America
-</footer>
-
-<script>
-
-const video = document.getElementById("video");
-const status = document.getElementById("status");
-
-const streamURL =
-"https://lbgo.bozztv.com/ssh101/ssh101/albanianusa/chunks.m3u8?lb_backend_hint=7";
-
-function showStatus(message) {
-status.textContent = message;
-}
-
-if (Hls.isSupported()) {
-
-const hls = new Hls({
-enableWorker: true,
-lowLatencyMode: true
-});
-
-hls.loadSource(streamURL);
-hls.attachMedia(video);
-
-hls.on(Hls.Events.MANIFEST_PARSED, function () {
-showStatus("🔴 TVIliria LIVE");
-video.play().catch(() => {});
-});
-
-hls.on(Hls.Events.ERROR, function (event, data) {
-
-console.log("HLS ERROR:", data);
-
-if (data.fatal) {
-showStatus("Stream temporarily unavailable");
-}
-});
-
-} else if (
-video.canPlayType("application/vnd.apple.mpegurl")
-) {
-
-video.src = streamURL;
-
-video.addEventListener("loadedmetadata", function () {
-showStatus("🔴 TVIliria LIVE");
-video.play().catch(() => {});
-});
-
-} else {
-
-showStatus("HLS is not supported by this browser.");
-}
-
-</script>
-
-</body>
-</html>
+<a href="artikuj.html" class="articles-button">

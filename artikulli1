@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Artikulli 1 - TVIliria</title>
+
+<style>
+body {
+margin: 0;
+background: #0b0b0b;
+color: white;
+font-family: Arial, sans-serif;
+}
+
+header {
+background: #111;
+padding: 20px;
+text-align: center;
+border-bottom: 2px solid #c40000;
+}
+
+.logo {
+font-size: 30px;
+font-weight: bold;
+}
+
+.logo span {
+color: #e00000;
+}
+
+.container {
+max-width: 900px;
+margin: auto;
+padding: 30px 18px;
+}
+
+.category {
+color: #e00000;
+font-weight: bold;
+font-size: 14px;
+}
+
+h1 {
+font-size: 34px;
+line-height: 1.2;
+margin: 10px 0;
+}
+
+.date {
+color: #888;
+margin-bottom: 25px;
+}
+
+.article {
+background: #151515;
+padding: 25px;
+border-radius: 10px;
+}
+
+.article p {
+color: #ddd;
+font-size: 18px;
+line-height: 1.8;
+}
+
+.back {
+display: inline-block;
+margin-top: 25px;
+padding: 12px 18px;
+background: #c40000;
+color: white;
+text-decoration: none;
+border-radius: 6px;
+}
+
+footer {
+text-align: center;
+color: #777;
+padding: 30px;
+margin-top: 40px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">TV<span>Iliria</span></div>
+</header>
+
+<div class="container">
+
+<div class="category">TVILIRIA</div>
+
+<h1>Mirësevini në Artikujt e TVIliria</h1>
+
+<div class="date">1 Tetor 2026</div>
+
+<div class="article">
+
+<p>
+TVIliria hap hapësirën e saj të re për artikuj dhe raportime,
+duke sjellë lajme, histori dhe zhvillime nga Shqipëria,
+diaspora dhe komuniteti shqiptar në Shtetet e Bashkuara.
+</p>
+
+<p>
+Kjo faqe do të përdoret për publikimin e artikujve dhe
+raportimeve të përgatitura nga TVIliria.
+</p>
+
+<p>
+Ky është vetëm fillimi. Në vazhdim do të shtojmë artikuj,
+fotografi, video dhe kategori të ndryshme.
+</p>
+
+<a href="artikuj.html" class="back">
+← Kthehu te Artikujt
+</a>
+
+</div>
+
+</div>
+
+<footer>
+© 2026 TVIliria — Albanian Media in America
+</footer>
+
+</body>
+</html>

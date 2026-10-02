@@ -29,7 +29,6 @@ border-bottom: 2px solid #c40000;
 .logo {
 font-size: 30px;
 font-weight: bold;
-letter-spacing: 1px;
 }
 
 .logo span {
@@ -48,10 +47,9 @@ border-radius: 6px;
 background: #222;
 color: white;
 text-decoration: none;
-font-size: 14px;
 }
 
-nav a:hover {
+nav a.live {
 background: #c40000;
 }
 
@@ -74,59 +72,66 @@ margin-bottom: 30px;
 
 .article {
 background: #151515;
-border-radius: 10px;
-overflow: hidden;
-margin-bottom: 25px;
 border: 1px solid #292929;
-}
-
-.article-content {
-padding: 20px;
+border-radius: 10px;
+padding: 22px;
+margin-bottom: 25px;
 }
 
 .category {
 color: #e00000;
 font-size: 13px;
 font-weight: bold;
-text-transform: uppercase;
 }
 
 .article h2 {
+font-size: 25px;
 margin: 8px 0;
-font-size: 24px;
 }
 
 .date {
 color: #888;
 font-size: 13px;
-margin-bottom: 12px;
 }
 
 .article p {
 color: #ccc;
-line-height: 1.6;
+line-height: 1.7;
 }
 
 .read {
 display: inline-block;
-margin-top: 10px;
-padding: 10px 16px;
+margin-top: 12px;
+padding: 11px 17px;
 background: #c40000;
 color: white;
+border-radius: 6px;
 text-decoration: none;
-border-radius: 5px;
+cursor: pointer;
+}
+
+.full-article {
+display: none;
+margin-top: 25px;
+padding-top: 20px;
+border-top: 1px solid #333;
+}
+
+.full-article p {
+font-size: 17px;
+line-height: 1.8;
+}
+
+.close {
+background: #333;
 }
 
 footer {
 text-align: center;
 color: #777;
 padding: 30px 15px;
-border-top: 1px solid #222;
 margin-top: 40px;
-}
-
-.live {
-background: #c40000 !important;
+border-top: 1px solid #222;
 }
 </style>
 </head>
@@ -141,7 +146,7 @@ TV<span>Iliria</span>
 
 <nav>
 <a href="index.html" class="live">🔴 LIVE TV</a>
-<a href="artikuj.html">📰 ARTIKUJT</a>
+<a href="artikuj.html">📰 ARTIKUJT TVILIRIA</a>
 </nav>
 
 </header>
@@ -156,10 +161,8 @@ Lajmet, raportimet dhe historitë tona
 
 <div class="article">
 
-<div class="article-content">
-
 <div class="category">
-TVIliria
+TVILIRIA
 </div>
 
 <h2>
@@ -171,11 +174,39 @@ Mirësevini në Artikujt e TVIliria
 </div>
 
 <p>
-Këtu do të gjeni artikujt, raportimet dhe historitë e përgatitura nga TVIliria për Shqipërinë, diasporën dhe komunitetin shqiptar në Amerikë.
+TVIliria hap hapësirën e saj të re për artikuj dhe raportime,
+duke sjellë lajme, histori dhe zhvillime nga Shqipëria,
+diaspora dhe komuniteti shqiptar në Shtetet e Bashkuara.
 </p>
 
-<a href="artikulli1.html" class="read">
+<a class="read" onclick="showArticle()">
 Lexo më shumë
+</a>
+
+<div id="fullArticle" class="full-article">
+
+<h2>Mirësevini në platformën e re të TVIliria</h2>
+
+<p>
+TVIliria po ndërton një hapësirë të re digjitale ku publiku
+shqiptar në Amerikë dhe kudo në botë mund të ndjekë lajme,
+raportime dhe histori të komunitetit.
+</p>
+
+<p>
+Në këtë faqe do të publikohen artikuj të përgatitur nga
+redaksia e TVIliria, me fokus Shqipërinë, diasporën,
+Shtetet e Bashkuara, kulturën, komunitetin dhe ngjarjet
+që kanë rëndësi për shqiptarët.
+</p>
+
+<p>
+Kjo është vetëm fillimi. Në vazhdim do të shtojmë artikuj
+të rinj, fotografi, video dhe kategori të ndryshme.
+</p>
+
+<a class="read close" onclick="hideArticle()">
+Mbyll artikullin
 </a>
 
 </div>
@@ -187,6 +218,16 @@ Lexo më shumë
 <footer>
 © 2026 TVIliria — Albanian Media in America
 </footer>
+
+<script>
+function showArticle() {
+document.getElementById("fullArticle").style.display = "block";
+}
+
+function hideArticle() {
+document.getElementById("fullArticle").style.display = "none";
+}
+</script>
 
 </body>
 </html>
